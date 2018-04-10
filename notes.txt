@@ -1,0 +1,4 @@
+add turn to db
+
+The game will track each player's wins and losses.
+Throw some chat functionality in there!

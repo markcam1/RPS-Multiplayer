@@ -28,6 +28,7 @@ var player1Ties = 0;
 var player2wins = 0;
 var player2Lost = 0;
 var player2Ties = 0;
+var userDbData = "";
 
 var judgeChoice1 = "";
 var judgeChoice2 = "";
@@ -36,13 +37,16 @@ var playerOneDone = false;
 var playerTwoDone = false;
 var dataUpdatePlay1 = "";
 var dataUpdatePlay2 = "";
+var choice_1_FromFire = "";
 
 var waitTimer;
+var masterKey;
+var refMasterKey;
 
 window.onload = function (){
     $(".add-player1").on("click", addNewUser1);
     $(".add-player2").on("click", addNewUser2);
-    $(".choiceBtn").on("click", ".btn-rps", judgeMaster);
+    $(".choiceBtn").on("click", ".btn-rps", choiceGrabber);
 
     // function blinkWait1() {
     //     $('#wait1').fadeOut(1500);
@@ -62,7 +66,6 @@ window.onload = function (){
         var name = $("#name-input1").val().trim();
         var playnum1 = $("#name-input1").attr("data-player");
     
-        console.log("p1 " + playnum1);
         firedb.ref().push({
             CameronRPS: {
                 player: {"1":
@@ -86,23 +89,18 @@ window.onload = function (){
         var losses = 5;
         var ties = 0;
         var choice = "";
-
         var name = $("#name-input2").val().trim();
-        var playnum2 = $("#name-input2").attr("data-player");
+
+        var loadFirePlay2 = masterKey + "/CameronRPS/player/"
     
-        console.log("p1 " + playnum2);
-        firedb.ref().push({
-            CameronRPS: {
-                player: {"2": 
+        firedb.ref(loadFirePlay2).update({ 
+                "2": 
                     {name: name,
                     wins: wins,
                     losses: losses,
                     ties: ties,
                     choice: choice
                     }
-                },
-                dateAdded: firebase.database.ServerValue.TIMESTAMP
-            }
         })
         $("#name-input2").val("");
     }
@@ -114,9 +112,9 @@ window.onload = function (){
         var showDate;
         
         function listGetter(cSnap, childkey){
-
+            
             var cFull = cSnap.val().CameronRPS.player
-    
+        
             if (cFull.hasOwnProperty("1")){
                 showPlay = cFull["1"].name;
                 showWins = cFull["1"].wins;
@@ -124,30 +122,17 @@ window.onload = function (){
                 showTies = cFull["1"].ties;
                 showDate = cSnap.val().dateAdded;
                 $("#play1BtnGrp").attr('data-key', childkey);
-                console.log("prev key1 " + childkey );
-                $("#wait1").text(showPlay);
-                //clearInterval(waitTimer);
-                //$('#wait1').hide();
-    
-            }
-            else if (cSnap.val().player.hasOwnProperty("2")){
-                showPlay = cSnap.val().player["2"].name;
-                showWins = cSnap.val().player["2"].wins;
-                showLosses = cSnap.val().player["2"].losses;
-                showTies = cSnap.val().player["2"].ties;
-                showDate = cSnap.val().dateAdded;
                 $("#play2BtnGrp").attr('data-key', childkey);
-                console.log("prev key2 " + childkey );
-                $("#wait2").text(showPlay);
+               // console.log("prev key1 " + childkey );
+                $("#wait1").text(showPlay);
+                masterKey = childkey;
+                refMasterKey = "\"" + childkey + "\"";
             }
+
+            
         }
         listGetter(childSnapshot, childSnapshot.key)  
-        console.log(childSnapshot.key);
-        // Prettify the employee start
-        //var empStartPretty = moment.unix(empStart).format("MM/DD/YY");
-        // Calculate the months worked using hardcore math
-        // To calculate the months worked
-        // var empMonths = moment().diff(moment.unix(empStart, "X"), "months");
+
         var tr = $(`<tr data-key=${ childSnapshot.key }>`)
         tr.append($('<td>').text(childSnapshot.key));
         tr.append($('<td>').text(showPlay));
@@ -163,8 +148,6 @@ window.onload = function (){
       });
 }
 
-
-
   $(document).on('click', '.delete', function() {
     var tableRow = $(this).parent().parent()
     var key = tableRow.attr('data-key')
@@ -173,60 +156,139 @@ window.onload = function (){
     tableRow.remove()
   })
 
-  firedb.ref().orderByChild("dateAdded").on("child_added", function(childSnapshot) {
+ 
 
-    // Log everything that's coming out of snapshot
-    // console.log("oder by");
-    // console.log("key: " + childSnapshot.key);
-    // console.log(childSnapshot.val().player);
-    // console.log(childSnapshot.val().player[1]);
-    //console.log(childSnapshot.val().player[1].name);
+    firedb.ref().on("value", function(snapshot){
+        console.log("new cam");      
+        
+        var snapChild =  snapshot.val()
+        checkPath1 = masterKey + "/CameronRPS/player/1"
+        is_Player1_alive = snapshot.child(checkPath1).exists()
+        checkPath2 = masterKey + "/CameronRPS/player/2"
+        is_Player2_alive = snapshot.child(checkPath2).exists()
 
-  // Handle the errors
-  }, function(errorObject) {
-    console.log("Errors handled: " + errorObject.code);
-  });
+        if (is_Player2_alive){    
+            for (key in snapChild){
+                if (key == masterKey){ 
+                    if (snapChild[key].CameronRPS.player){
+                        var play2Path = snapChild[key].CameronRPS.player["2"]; 
+                        choice_2_FromFire = play2Path.choice;
+                        $("#wait2").text(play2Path.name);
+                        $(".rps-row").show();
+                    }
+                }
+            }
+        }
+        if (is_Player1_alive) {
+            for (key in snapChild){
+                if (key == masterKey){ 
+                    if (snapChild[key].CameronRPS.player){
+                        var play1Path = snapChild[key].CameronRPS.player["1"]; 
+                        choice_1_FromFire = play1Path.choice;
+                    }  
+                }
+            }
+        }
+        else{
+            console.log("new cam FAIL -------------");
+        }
+
+
+
+    }, function(errorObject) {
+        console.log("Errors handled: " + errorObject.code);
+      })
+
+
+      function judgeMaster () {
+          console.log("judge")      
+          console.log(playerOneDone + " : " + playerTwoDone)
+          judgeChoice1 = choice_1_FromFire;
+          judgeChoice2 = choice_2_FromFire;    
+          
+          if (playerOneDone === true && playerTwoDone === true) {
+              console.log("p1: " + judgeChoice1 + " |  p2: " + judgeChoice2)      
+              
+              if ((judgeChoice1 === "r") && (judgeChoice2 === "s")) {
+                player1wins++;
+                player2Lost++
+                console.log("judge lev1")      
+            } else if ((judgeChoice1 === "r") && (judgeChoice2 === "p")) {
+                player2wins++;
+                player1Lost++
+            } else if ((judgeChoice1 === "s") && (judgeChoice2 === "r")) {
+                player2wins++;
+                player1Lost++
+            } else if ((judgeChoice1 === "s") && (judgeChoice2 === "p")) {
+                player1wins++;
+                player2Lost++
+            } else if ((judgeChoice1 === "p") && (judgeChoice2 === "r")) {
+                player1wins++;
+                player2Lost++
+            } else if ((judgeChoice1 === "p") && (judgeChoice2 === "s")) {
+                player2wins++;
+                player1Lost++
+            } else if (judgeChoice1 === judgeChoice2) {
+                player1Ties++;
+                player2Ties++;
+            }
+            dbUpdater();
+        }
+
+        function dbUpdater (){
+            console.log("data____Fire");
+    
+            playerOneDone, playerTwoDone = false;
+            var dataFirePlay1 = masterKey + "/CameronRPS/player/1"
+            console.log(dataFirePlay1);
+            var dataFirePlay2 = masterKey + "/CameronRPS/player/2"
+            console.log(dataFirePlay2);
+    
+            firedb.ref(dataFirePlay1).update({
+                    wins: player1wins,
+                    losses: player1Lost,
+                    ties: player1Ties,
+                })
+                firedb.ref(dataFirePlay2).update({
+                    wins: player2wins,
+                    losses: player2Lost,
+                    ties: player2Ties,
+            })
+        }
+
+      }
+
 
   firedb.ref().orderByChild("dateAdded").limitToLast(1).on("child_added", function(snapshot) {
 
-    console.log("in limit");
+    // console.log("in limit");
 
     var objChild =  snapshot.val()
+    // console.log(objChild);
 
+ 
+        for (key in objChild){
+            
+            if (key == 'CameronRPS') {   
 
-   for (key in objChild){
-
-       if (key == 'player'){
-           if (objChild[key].hasOwnProperty("1")){
-               console.log('play1 ready')
-               $("#head_mc").text("Waiting for Player 2")
-
-               $(".player2column").show();
+                if (objChild[key].hasOwnProperty("player")){
+                    //console.log(objChild[key].player);
+                    propPlay = objChild[key].player;
+                    
+                    if (propPlay.hasOwnProperty("2")) {
+                        userDbData = propPlay["2"].name;                        
+                        $("#head_mc").text("GAME ON")
+        
+                        $(".player2column").show();
+                    }
+                    if (propPlay.hasOwnProperty("1")){
+                        //console.log('play1 ready');
+                        $("#head_mc").text("Waiting for Player 2");
+                        $(".player2column").show();
+                    }
+                 }
             }
-            else if (objChild[key].hasOwnProperty("2")){
-                console.log('Play 2 ready')
-                $("#head_mc").text("GAME ON")
-                $(".rps-row").show();
-                $(".player2column").show();
-                // console.log(objChild[key]["2"].name);
-            }
-            else{   
-                console.log("fail");
-                // console.log(objChild[key]);
-                // console.log(objChild[key]["1"]);
-                // console.log(objChild[key].hasOwnProperty("1"));
-                // console.log(typeof(objChild[key]));
-           }
-       }
-   }
-//    if (objChild[key].hasOwnProperty("1") === true && objChild[key].hasOwnProperty("2") === true ){
-//     $(".rps-row").show();
-//     console.log("shower");
-//    }
-
-
-
-
+        }
     // Change the HTML to reflect
     // $("#name-display").text(snapshot.val().name);
     // $("#email-display").text(snapshot.val().email);
@@ -235,77 +297,45 @@ window.onload = function (){
   });
 
 
-function judgeMaster(event) {
+function choiceGrabber(event) {
 
 
     if ($(this).hasClass( "playerChoice1")){
         
-        judgeChoice1 = $(this).val();
+        btnChoice1 = $(this).val();
         copyChoice1 = $(this).text();
         dataUpdatePlay1 = $(this).parent().attr("data-key");
+        var dataFirePlay1 = dataUpdatePlay1 + "/CameronRPS/player/1"
         $("#show1Choice").text(copyChoice1);
         playerOneDone = true;
-        console.log("judge key1: " + dataUpdatePlay1)      
+
+        dbChoiceUpdater(btnChoice1, dataFirePlay1);
     }
     if ($(this).hasClass( "playerChoice2")) {
-        judgeChoice2 = $(this).val();
+        btnChoice2 = $(this).val();
         copyChoice2 = $(this).text();
         dataUpdatePlay2 = $(this).parent().attr("data-key");
+        var dataFirePlay2 = dataUpdatePlay2 + "/CameronRPS/player/2"
         $("#show2Choice").text(copyChoice2);
         playerTwoDone = true;
+        
+        dbChoiceUpdater(btnChoice2, dataFirePlay2);
     } 
 
-    
-    if (playerOneDone === true && playerTwoDone === true) {
-        console.log("firstlevel")      
-        console.log("p1: " + judgeChoice1 + " |  p2: " + judgeChoice2)      
-        
-        if ((judgeChoice1 === "r") && (judgeChoice2 === "s")) {
-            player1wins++;
-            player2Lost++
-        } else if ((judgeChoice1 === "r") && (judgeChoice2 === "p")) {
-            player2wins++;
-            player1Lost++
-        } else if ((judgeChoice1 === "s") && (judgeChoice2 === "r")) {
-            player2wins++;
-            player1Lost++
-        } else if ((judgeChoice1 === "s") && (judgeChoice2 === "p")) {
-            player1wins++;
-            player2Lost++
-        } else if ((judgeChoice1 === "p") && (judgeChoice2 === "r")) {
-            player1wins++;
-            player2Lost++
-        } else if ((judgeChoice1 === "p") && (judgeChoice2 === "s")) {
-            player2wins++;
-            player1Lost++
-        } else if (judgeChoice1 === judgeChoice2) {
-            player1Ties++;
-            player2Ties++;
-        }
-        dbUpdater();
-        
-    }
+    function dbChoiceUpdater (choiceForDB,dbKey){
+        //console.log("choice db");
+         var fireChoice = choiceForDB;
+         var keyNode = dbKey;
 
+        //playerOneDone, playerTwoDone = false;
+        // console.log(fireChoice);
+        // console.log(keyNode);
 
-    function dbUpdater (){
-        console.log("data____Fire");
-
-        playerOneDone, playerTwoDone = false;
-        var dataFirePlay1 = dataUpdatePlay1 + "/player/1"
-        console.log(dataFirePlay1);
-        var dataFirePlay2 = dataUpdatePlay2 + "/player/2"
-        console.log(dataFirePlay2);
-
-        firedb.ref(dataFirePlay1).update({
-                wins: player1wins,
-                losses: player1Lost,
-                ties: player1Ties,
+        firedb.ref(keyNode).update({
+            choice: fireChoice
             })
-            firedb.ref(dataFirePlay2).update({
-                wins: player2wins,
-                losses: player2Lost,
-                ties: player2Ties,
-        })
     }
+
+    judgeMaster();
 }
 
