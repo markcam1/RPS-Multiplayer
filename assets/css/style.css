@@ -6,3 +6,10 @@
     display: none;
     
 }
+
+.btn-firstuser:disabled {
+    background-color: black;
+}
+.btn-seconduser:disabled {
+    background-color: black;  
+}
