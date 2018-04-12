@@ -17,11 +17,16 @@
 <body>
     <div class="container">
         <div class="row">
-            <div class="col-md-12 text-center">
-                <h1>rock paper scissors</h1>
-                <h1 id="head_mc" >Two Players Needed - Be the first</h1>
+            <div class="col-md-8 col-md-offset-2 text-center">
+                <h1 id="hcam">Cameron's Rock Paper Scissors</h1>
             </div>
         </div>
+        <div class="row">
+            <div class="col-md-6 col-md-offset-3 text-center">
+                <pre><h3 id="head_mc" >Two Players Needed - Be the first</h3></pre>
+            </div>
+        </div>
+        <br><br>
         <div class="row">
             <div class="col-md-4">
                 <div class="row">
@@ -38,6 +43,9 @@
                         </div>
                         <div class="panel-body text-center">
                             <span id="show1Choice"></span>
+                        </div>
+                        <div class="panel-body text-center">
+                            <pre>WON: <span id="w1"></span>  |  LOSSED: <span id="l1"></span>  |  TIED: <span id="t1"></span></pre>
                         </div>
                     </div>
                     <div class="btn-group-lg btn-group-vertical choiceBtn" id="play1BtnGrp" role="group" aria-label="Basic example">
@@ -68,18 +76,16 @@
                         <div class="panel-body text-center">
                             <span id="show2Choice"></span>
                         </div>
+                        <div class="panel-body text-center">
+                            <pre>WON: <span id="w2"></span>  |  LOSSED: <span id="l2"></span>  |  TIED: <span id="t2"></span></pre>
+                        </div>
                     </div>
-                    <!-- <div class="panel-body text-center choiceBtn">
-                    </div> -->
                 </div>
-                <!-- <div class="row rps-row">
+                <div class="row rps-show">
                     <div class="col-md-4 center-block"></div>
                     <div class="btn-group-lg btn-group-vertical choiceBtn" id="play2BtnGrp" role="group" aria-label="Basic example">
-                        <button type="button" class="btn btn-seconduser btn-rps playerChoice2" value="r">Rock</button>
-                        <button type="button" class="btn btn-seconduser btn-rps playerChoice2" value="p">Paper</button>
-                        <button type="button" class="btn btn-seconduser btn-rps playerChoice2" value="s">Scissors</button>
                     </div>
-                </div> -->
+                </div>
             </div>
         </div>
         <br><br>

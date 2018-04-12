@@ -1,3 +1,13 @@
+body {
+    background-image: url(../media/doodles.png);
+    background-repeat: no-repeat;
+    background-size: 100%;
+}
+
+#hcam {
+    color: gold;
+}
+
 .rps-row {
     display: none;
 }
@@ -7,9 +17,21 @@
     
 }
 
+.btn-success:disabled {
+    background-color: black;
+}
+.btn-success:disabled {
+    background-color: black;  
+}
 .btn-firstuser:disabled {
     background-color: black;
 }
 .btn-seconduser:disabled {
     background-color: black;  
+}
+
+
+.panel-body {
+    background-color: black;
+    color: white;
 }

@@ -6,7 +6,6 @@ $( window ).on( "load", function() {
     console.log( "window loaded" );
 });
 
-// Initialize Firebase
 var config = {
     apiKey: "AIzaSyCovVVlsXlrsuqPEpGl2k6F0mIcvRtgex4",
     authDomain: "rps-db-e60f8.firebaseapp.com",
@@ -18,28 +17,23 @@ var config = {
 firebase.initializeApp(config);
 
 var firedb = firebase.database();
-
-// Creates an array that lists out all of the options (Rock, Paper, or Scissors).
- var computerChoices = ["r", "p", "s"];
-// Creating variables to hold the number of wins, losses, and ties. They start at 0.
 var player1wins = 0;
 var player1Lost = 0;
 var player1Ties = 0;
 var player2wins = 0;
 var player2Lost = 0;
 var player2Ties = 0;
-var userDbData = "";
+//var userDbData = "";
 var turn = 0;
-
+var turnCheck = 0;
 var judgeChoice1 = "";
 var judgeChoice2 = "";
-
 var playerOneDone = false;
 var playerTwoDone = false;
 var dataUpdatePlay1 = "";
 var dataUpdatePlay2 = "";
 var choice_1_FromFire = "";
-
+var choice_2_FromFire = "";
 var waitTimer;
 var masterKey;
 var refMasterKey;
@@ -89,19 +83,27 @@ window.onload = function (){
             'type': 'button',
             'class': 'btn btn-success btn-lg btn-rps playerChoice1'
           })
-
-
+        var btnPaperShow1 = $('<button value="p">').text("PAPER");
+        btnPaperShow1.attr({
+            'type': 'button',
+            'class': 'btn btn-success btn-lg btn-rps playerChoice1'
+          })
+        var btnScissorsShow1 = $('<button value="s">').text("SCISSORS");
+        btnScissorsShow1.attr({
+            'type': 'button',
+            'class': 'btn btn-success btn-lg btn-rps playerChoice1'
+          })
 
         $("#play1BtnGrp").append(btnRockShow1);
-        
-
+        $("#play1BtnGrp").append(btnPaperShow1);
+        $("#play1BtnGrp").append(btnScissorsShow1);
     }
     
     function addNewUser2 (event) {
         event.preventDefault();
     
         var wins = 0;
-        var losses = 5;
+        var losses = 0;
         var ties = 0;
         var choice = "";
 
@@ -119,16 +121,35 @@ window.onload = function (){
                     }
         })
         $("#name-input2").val("");
+
+        var btnRockShow2 = $('<button value="r">').text("ROCK");
+        btnRockShow2.attr({
+            'type': 'button',
+            'class': 'btn btn-success btn-lg btn-rps playerChoice2'
+          })
+        var btnPaperShow2 = $('<button value="p">').text("PAPER");
+        btnPaperShow2.attr({
+            'type': 'button',
+            'class': 'btn btn-success btn-lg btn-rps playerChoice2'
+          })
+        var btnScissorsShow2 = $('<button value="s">').text("SCISSORS");
+        btnScissorsShow2.attr({
+            'type': 'button',
+            'class': 'btn btn-success btn-lg btn-rps playerChoice2'
+          })
+
+        $("#play2BtnGrp").append(btnRockShow2);
+        $("#play2BtnGrp").append(btnPaperShow2);
+        $("#play2BtnGrp").append(btnScissorsShow2);
+        startButtonState();
     }
 }
 
 firedb.ref().on("child_added", function(childSnapshot, prevChildKey) {
-    console.log("prev key function------");
     var showPlay;
     var showDate;
     
     function listGetter(cSnap, childkey){
-        
         var cFull = cSnap.val().CameronRPS.player
     
         if (cFull.hasOwnProperty("1")){
@@ -136,8 +157,6 @@ firedb.ref().on("child_added", function(childSnapshot, prevChildKey) {
             showDate = cSnap.val().CameronRPS.dateAdded;
             $("#play1BtnGrp").attr('data-key', childkey);
             $("#play2BtnGrp").attr('data-key', childkey);
-            $(".playerChoice2").prop("disabled", true);
-            //$("#wait1").text(showPlay);
             masterKey = childkey;
             refMasterKey = "\"" + childkey + "\"";
         }
@@ -147,9 +166,6 @@ firedb.ref().on("child_added", function(childSnapshot, prevChildKey) {
     var tr = $(`<tr data-key=${ childSnapshot.key }>`)
     tr.append($('<td>').text(childSnapshot.key));
     tr.append($('<td>').text(showPlay));
-    // tr.append($('<td>').text(showWins));
-    // tr.append($('<td>').text(showLosses))
-    // tr.append($('<td>').text(showTies))
     tr.append($('<td>').text(showDate))
     tr.append($('<td>').append($('<button class="delete">').text('Delete me!')))
     
@@ -162,13 +178,11 @@ firedb.ref().on("child_added", function(childSnapshot, prevChildKey) {
 $(document).on('click', '.delete', function() {
 var tableRow = $(this).parent().parent()
 var key = tableRow.attr('data-key')
-
 firedb.ref().child(key).remove()
 tableRow.remove()
 })
 
 firedb.ref().on("value", function(snapshot){
-    console.log("new cam");      
     
     var snapChild =  snapshot.val()
     checkPlayerPath1 = masterKey + "/CameronRPS/player/1"
@@ -185,10 +199,12 @@ firedb.ref().on("value", function(snapshot){
             if (key == masterKey){ 
                 if (snapChild[key].CameronRPS.player){
                     var play2Path = snapChild[key].CameronRPS.player["2"]; 
-                    
                     choice_2_FromFire = play2Path.choice;
                     $("#wait2").text(play2Path.name);
                     $(".rps-row").show();
+                    $("#w2").text(play2Path.wins);
+                    $("#l2").text(play2Path.losses);
+                    $("#t2").text(play2Path.ties);
                 }
             }
         }
@@ -200,6 +216,9 @@ firedb.ref().on("value", function(snapshot){
                     var play1Path = snapChild[key].CameronRPS.player["1"]; 
                     choice_1_FromFire = play1Path.choice;
                     $("#wait1").text(play1Path.name);
+                    $("#w1").text(play1Path.wins);
+                    $("#l1").text(play1Path.losses);
+                    $("#t1").text(play1Path.ties);
                 }  
             }
         }
@@ -209,22 +228,37 @@ firedb.ref().on("value", function(snapshot){
             if (key == masterKey){ 
                 if (snapChild[key].CameronRPS){
                     var turnFromDb = snapChild[key].CameronRPS.turn; 
-                    console.log("turnFromDb")
-                    console.log(turnFromDb)
-                    //choice_1_FromFire = play1Path.choice;
-
-                    //$("#wait1").text(play1Path.name);
-
+                    turnCheck = turnFromDb;
+                    if (turnCheck == 0) {
+                        $(".playerChoice2").prop("disabled", true);
+                        $(".playerChoice1").prop("disabled", false);
+                    }
+                    if (turnCheck == 1){
+                        $(".playerChoice2").prop("disabled", false);
+                        $(".playerChoice1").prop("disabled", true);
+                        playerOneDone = true;
+                    }
+                    if (turnCheck == 2) {
+                        $(".playerChoice2").prop("disabled", true);
+                        $(".playerChoice1").prop("disabled", false);
+                        playerTwoDone = true;
+                    }
                 }  
             }
         }
     }
     else{
-        console.log("new cam FAIL -------------");
+        console.log("players not created");
     }
     }, function(errorObject) {
     console.log("Errors handled: " + errorObject.code);
 })
+
+function startButtonState (){
+    console.log("TURNMASTER 1 ");
+    $(".playerChoice2").prop("disabled", true);
+    $(".playerChoice1").prop("disabled", false);
+}
 
 
 function judgeMaster () {
@@ -239,37 +273,48 @@ function judgeMaster () {
         if ((judgeChoice1 === "r") && (judgeChoice2 === "s")) {
         player1wins++;
         player2Lost++
-        console.log("judge lev1")      
-    } else if ((judgeChoice1 === "r") && (judgeChoice2 === "p")) {
-        player2wins++;
-        player1Lost++
-    } else if ((judgeChoice1 === "s") && (judgeChoice2 === "r")) {
-        player2wins++;
-        player1Lost++
-    } else if ((judgeChoice1 === "s") && (judgeChoice2 === "p")) {
-        player1wins++;
-        player2Lost++
-    } else if ((judgeChoice1 === "p") && (judgeChoice2 === "r")) {
-        player1wins++;
-        player2Lost++
-    } else if ((judgeChoice1 === "p") && (judgeChoice2 === "s")) {
-        player2wins++;
-        player1Lost++
-    } else if (judgeChoice1 === judgeChoice2) {
-        player1Ties++;
-        player2Ties++;
+        } else if ((judgeChoice1 === "r") && (judgeChoice2 === "p")) {
+            player2wins++;
+            player1Lost++
+        } else if ((judgeChoice1 === "s") && (judgeChoice2 === "r")) {
+            player2wins++;
+            player1Lost++
+        } else if ((judgeChoice1 === "s") && (judgeChoice2 === "p")) {
+            player1wins++;
+            player2Lost++
+        } else if ((judgeChoice1 === "p") && (judgeChoice2 === "r")) {
+            player1wins++;
+            player2Lost++
+        } else if ((judgeChoice1 === "p") && (judgeChoice2 === "s")) {
+            player2wins++;
+            player1Lost++
+        } else if (judgeChoice1 === judgeChoice2) {
+            player1Ties++;
+            player2Ties++;
+        }
+    //console.log("turnCheck in judge")
+    //console.log(turnCheck)
+    if (turnCheck == 2){
+        dbUpdater();
     }
-    dbUpdater();
-}
+
+    }
 
     function dbUpdater (){
-        console.log("data____Fire");
+        console.log("data____Fire__Counter");
 
         playerOneDone, playerTwoDone = false;
         var dataFirePlay1 = masterKey + "/CameronRPS/player/1"
-        console.log(dataFirePlay1);
         var dataFirePlay2 = masterKey + "/CameronRPS/player/2"
-        console.log(dataFirePlay2);
+        
+        console.log("player---1");
+        console.log(player1wins);
+        console.log(player1Lost);
+        console.log(player1Ties);
+        console.log("player---2");
+        console.log(player2wins);
+        console.log(player2Lost);
+        console.log(player2Ties);
 
         firedb.ref(dataFirePlay1).update({
                 wins: player1wins,
@@ -286,25 +331,17 @@ function judgeMaster () {
 
 
 firedb.ref().orderByChild("dateAdded").limitToLast(1).on("child_added", function(snapshot) {
-
 console.log("in limit");
-
 var objChild =  snapshot.val()
 console.log(objChild);
-
-
     for (key in objChild){
-        
         if (key == 'CameronRPS') {   
-
             if (objChild[key].hasOwnProperty("player")){
                 //console.log(objChild[key].player);
                 propPlay = objChild[key].player;
-                
                 if (propPlay.hasOwnProperty("2")) {
                     userDbData = propPlay["2"].name;                        
                     $("#head_mc").text("GAME ON")
-    
                     $(".player2column").show();
                 }
                 if (propPlay.hasOwnProperty("1")){
@@ -312,72 +349,60 @@ console.log(objChild);
                     $("#head_mc").text("Waiting for Player 2");
                     $(".player2column").show();
                 }
-                }
+            }
         }
     }
-// Change the HTML to reflect
-// $("#name-display").text(snapshot.val().name);
-// $("#email-display").text(snapshot.val().email);
-// $("#age-display").text(snapshot.val().age);
-// $("#comment-display").text(snapshot.val().comment);
+
 });
 
 
-function choiceGrabber(event) {
+// function choiceGrabber(event) {
 
-    if ($(this).hasClass( "playerChoice1")){
+//     if ($(this).hasClass( "playerChoice1")){
         
-        btnChoice1 = $(this).val();
-        copyChoice1 = $(this).text();
-        dataUpdatePlay1 = $(this).parent().attr("data-key");
-        var dataFirePlay1 = dataUpdatePlay1 + "/CameronRPS/player/1"
-        var turnFirePlay1 = dataUpdatePlay1 + "/CameronRPS/"
-        $("#show1Choice").text(copyChoice1);
-        $(".playerChoice2").prop("disabled", false);
-        $(".playerChoice1").prop("disabled", true);
-        playerOneDone = true;
-        P1_turns = 1;
+//         btnChoice1 = $(this).val();
+//         copyChoice1 = $(this).text();
+//         dataUpdatePlay1 = $(this).parent().attr("data-key");
+//         var dataFirePlay1 = dataUpdatePlay1 + "/CameronRPS/player/1"
+//         var turnFirePlay1 = dataUpdatePlay1 + "/CameronRPS/"
+//         $("#show1Choice").text(copyChoice1);
+//         playerOneDone = true;
+//         P1_turns = 1;
 
-        dbChoiceUpdater(btnChoice1, dataFirePlay1, P1_turns, turnFirePlay1);
-        console.log("choiceGrabber  p1 _____")
-    }
-    if ($(this).hasClass( "playerChoice2")) {
-        btnChoice2 = $(this).val();
-        copyChoice2 = $(this).text();
-        dataUpdatePlay2 = $(this).parent().attr("data-key");
-        var dataFirePlay2 = dataUpdatePlay2 + "/CameronRPS/player/2"
-        var turnFirePlay2 = dataUpdatePlay2 + "/CameronRPS/"
-        $("#show2Choice").text(copyChoice2);
-        $(".playerChoice2").prop("disabled", true);
-        $(".playerChoice1").prop("disabled", false);
-        playerTwoDone = true;
-        P2_turn = 2;
+//         dbChoiceUpdater(btnChoice1, dataFirePlay1, P1_turns, turnFirePlay1);
+//         console.log("choiceGrabber  p1 _____")
+//     }
+//     if ($(this).hasClass( "playerChoice2")) {
+//         btnChoice2 = $(this).val();
+//         copyChoice2 = $(this).text();
+//         dataUpdatePlay2 = $(this).parent().attr("data-key");
+//         var dataFirePlay2 = dataUpdatePlay2 + "/CameronRPS/player/2"
+//         var turnFirePlay2 = dataUpdatePlay2 + "/CameronRPS/"
+//         $("#show2Choice").text(copyChoice2);
+//         playerTwoDone = true;
+//         P2_turn = 2;
         
-        dbChoiceUpdater(btnChoice2, dataFirePlay2, P2_turn, turnFirePlay2);
-        console.log("choiceGrabber  p2 _____")
-    } 
+//         dbChoiceUpdater(btnChoice2, dataFirePlay2, P2_turn, turnFirePlay2);
+//         console.log("choiceGrabber  p2 _____")
+//     } 
 
-    function dbChoiceUpdater (choiceForDB,dbKey, incomingTurn, incomingTurnKey){
-        //console.log("choice db");
-         var fireChoice = choiceForDB;
-         var keyNode = dbKey;
-         var dbTurns = incomingTurn;
-         var turnNode = incomingTurnKey;
+//     function dbChoiceUpdater (choiceForDB,dbKey, incomingTurn, incomingTurnKey){
+//          var fireChoice = choiceForDB;
+//          var keyNode = dbKey;
+//          var dbTurns = incomingTurn;
+//          var turnNode = incomingTurnKey;
 
-        //playerOneDone, playerTwoDone = false;
-        // console.log(fireChoice);
-        // console.log(keyNode);
+//         firedb.ref(keyNode).update({
+//             choice: fireChoice
+//             })
+//         firedb.ref(turnNode).update({
+//             turn: dbTurns
+//             })
+//     }
+//     judgeMaster();
+// }
 
-        firedb.ref(keyNode).update({
-            choice: fireChoice
-            })
-        firedb.ref(turnNode).update({
-            turn: dbTurns
-            })
-    }
 
-    judgeMaster();
-}
 
 function newGrabber(event) {
     
@@ -394,7 +419,7 @@ function newGrabber(event) {
         $("#show1Choice").text(copyChoice1);
         $(".playerChoice2").prop("disabled", false);
         $(".playerChoice1").prop("disabled", true);
-        playerOneDone = true;
+        //playerOneDone = true;
         P1_turns = 1;
 
         dbChoiceUpdater(btnChoice1, dataFirePlay1, P1_turns, turnFirePlay1);
@@ -410,7 +435,7 @@ function newGrabber(event) {
         $("#show2Choice").text(copyChoice2);
         $(".playerChoice2").prop("disabled", true);
         $(".playerChoice1").prop("disabled", false);
-        playerTwoDone = true;
+        //playerTwoDone = true;
         P2_turn = 2;
         
         dbChoiceUpdater(btnChoice2, dataFirePlay2, P2_turn, turnFirePlay2);
@@ -423,10 +448,9 @@ function newGrabber(event) {
          var keyNode = dbKey;
          var dbTurns = incomingTurn;
          var turnNode = incomingTurnKey;
-
-        //playerOneDone, playerTwoDone = false;
-        // console.log(fireChoice);
-        // console.log(keyNode);
+         console.log("dbChoiceUpdater");
+         console.log(fireChoice);
+         console.log(dbTurns);
 
         firedb.ref(keyNode).update({
             choice: fireChoice
