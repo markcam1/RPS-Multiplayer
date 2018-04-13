@@ -45,8 +45,6 @@ window.onload = function (){
 
     function sendText(event){
         event.preventDefault();
-        console.log("text")
-        
         
         var dataFireText = masterKey + "/CameronRPS/"
         var newText = $("#messageinput").val().trim();
@@ -54,7 +52,10 @@ window.onload = function (){
 
         firedb.ref(dataFireText).update({
                 text: newText,
-            })
+        })
+
+        $("#messageinput").val("");
+                
     }
 
     function reloadPage(){
