@@ -22,24 +22,30 @@
             </div>
         </div>
         <div class="row">
-            <div class="col-md-6 col-md-offset-3 text-center">
+            <div class="col-md-6 col-md-offset-3 text-center" id="board">
                 <pre><h3 id="head_mc" >Two Players Needed - Be the first</h3></pre>
+            </div>
+        </div>
+        <br><br>
+        <div class="row">
+            <div class="col-md-4 col-md-offset-4">
+                <div class="row" id="allusers">
+                    <div class="col-md-4 col-md-offset-4 text-center">
+                        <div class="btn-group">
+                            <label for="name-input">Add Player:</label><input class="form-control" placeholder="Username" id="name-input" type="text">
+                        </div>
+                        <button type="submit" class="btn btn-start add-players" id="startbtn">Submit</button>
+                    </div>
+                </div>
             </div>
         </div>
         <br><br>
         <div class="row">
             <div class="col-md-4">
                 <div class="row">
-                    <div class="form-group">
-                        <label for="name-input">Player1:</label>
-                        <input class="form-control" id="name-input1" type="text" data-player="1">
-                    </div>
-                    <button type="submit" class="btn btn-default add-player1">Submit</button>
-                </div>
-                <div class="row">
                     <div class="panel panel-default">
                         <div class="panel-body text-center">
-                            <span class="text-uppercase" id="wait1">don't be a loser, join now</span>
+                            <span class="text-uppercase" id="wait1">join now</span>
                         </div>
                         <div class="panel-body text-center">
                             <span id="show1Choice"></span>
@@ -51,27 +57,12 @@
                     <div class="btn-group-lg btn-group-vertical choiceBtn" id="play1BtnGrp" role="group" aria-label="Basic example">
                     </div>
                 </div>
-                <!-- <div class="row rps-row">
-                    <div class="col-md-4 center-block"></div>
-                    <div class="btn-group-lg btn-group-vertical choiceBtn" id="play1BtnGrp" role="group" aria-label="Basic example">
-                        <button type="button" class="btn btn-firstuser btn-rps playerChoice1" value="r">Rock</button>
-                        <button type="button" class="btn btn-firstuser btn-rps playerChoice1" value="p">Paper</button>
-                        <button type="button" class="btn btn-firstuser btn-rps playerChoice1" value="s">Scissors</button>
-                    </div>
-                </div> -->
             </div>
             <div class="col-md-4 col-md-offset-4">
-                <div class="row player2column">
-                    <div class="form-group">
-                        <label for="name-input">Player2:</label>
-                        <input class="form-control" id="name-input2" type="text" data-player="2">
-                    </div>
-                    <button type="submit" class="btn btn-default add-player2">Submit</button>
-                </div>
                 <div class="row">
                     <div class="panel panel-default">
                         <div class="panel-body text-center">
-                            <span class="text-uppercase" id="wait2">waiting for player 1</span>
+                            <span class="text-uppercase" id="wait2">join now</span>
                         </div>
                         <div class="panel-body text-center">
                             <span id="show2Choice"></span>
@@ -88,25 +79,11 @@
                 </div>
             </div>
         </div>
-        <br><br>
+        <br><br><br>
         <div class="row">
-            <div class="col-md-12">
-                <table class="table table-hover" id='db-table'>
-                    <thead>
-                        <tr>
-                        <th>KEY</th>
-                        <th>NAME</th>
-                        <th>WINS</th>
-                        <th>LOSSED</th>
-                        <th>TIES</th>
-                        <th>SERV-TIME</th>
-                        <th>KILL</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                    </tbody>
-                </table>
-            </div>
+                <div class="col-md-2 col-md-offset-5 text-center">
+                    <button type="submit" class="btn btn-danger btn-xs" id="reload">Reload all</button>
+                </div>
         </div>
         <form>
         </form>

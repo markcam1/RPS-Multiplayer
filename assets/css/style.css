@@ -1,4 +1,4 @@
-body {
+.container {
     background-image: url(../media/doodles.png);
     background-repeat: no-repeat;
     background-size: 100%;
@@ -6,15 +6,7 @@ body {
 
 #hcam {
     color: gold;
-}
-
-.rps-row {
-    display: none;
-}
-
-.player2column {
-    display: none;
-    
+    text-shadow: 3px 3px 5px #000000;
 }
 
 .btn-success:disabled {
@@ -23,15 +15,23 @@ body {
 .btn-success:disabled {
     background-color: black;  
 }
-.btn-firstuser:disabled {
+
+.btn-start {
+    background-color: gold;
+}
+
+.btn-start:disabled {
     background-color: black;
 }
-.btn-seconduser:disabled {
-    background-color: black;  
-}
+
 
 
 .panel-body {
-    background-color: black;
-    color: white;
+    background-color: darkgrey;
+    color: black;
+    box-shadow: 10px 10px 5px grey;
+}
+
+#board {
+    box-shadow: 10px 10px 5px grey;
 }
