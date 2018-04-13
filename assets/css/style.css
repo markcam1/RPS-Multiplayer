@@ -20,6 +20,13 @@
     background-color: gold;
 }
 
+.btn-im:disabled {
+    background-color: black;
+}
+.btn-im {
+    background-color: silver;
+}
+
 .btn-start:disabled {
     background-color: black;
 }

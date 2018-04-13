@@ -81,14 +81,38 @@
         </div>
         <br><br><br>
         <div class="row">
-                <div class="col-md-2 col-md-offset-5 text-center">
-                    <button type="submit" class="btn btn-danger btn-xs" id="reload">Reload-All</button>
+            <div class="row">
+                <div class="col-md-10 col-md-offset-1">
+                    <div class="panel-heading text-center">Instant Messages</div>
+                    <div class="panel-body text-center">
+                        <span id="incometext"></span>
+                    </div>
+                    <br>
                 </div>
+            </div>
+            <div class="row">
+                <div class="col-md-8 col-md-offset-2 instmess">
+                    <form>
+                        <div class="form-group">
+                            <label for="messagetext">messages</label>
+                            <input type="text" class="form-control" id="messageinput" placeholder="be clever here">
+                        </div>
+                        <button type="submit" class="btn btn-im addtext">Send</button>
+                        <p>messages can be sent when one player joins</p>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <br><br>
+        <div class="row">
+            <div class="col-md-2 col-md-offset-5 text-center">
+                <button type="submit" class="btn btn-danger btn-xs" id="reload">Reload-All</button>
+            </div>
         </div>
         <div class="row">
-                <div class="col-md-4 col-md-offset-4 text-center">
-                    <p>The <strong>"Reload-All"</strong> button will clear the game database. Users on other pages will need to refresh their page</p>
-                </div>
+            <div class="col-md-4 col-md-offset-4 text-center">
+                <p>The <strong>"Reload-All"</strong> button will clear the game database. Users on other pages will need to refresh their page</p>
+            </div>
         </div>
         <form>
         </form>

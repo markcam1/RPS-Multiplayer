@@ -40,7 +40,22 @@ window.onload = function (){
     $(".add-players").on("click", addAllUsers);
     $(".choiceBtn").on("click", ".btn-rps", newGrabber);
     $("#reload").on("click", reloadPage);
+    $(".addtext").on("click", sendText);
 
+
+    function sendText(event){
+        event.preventDefault();
+        console.log("text")
+        
+        
+        var dataFireText = masterKey + "/CameronRPS/"
+        var newText = $("#messageinput").val().trim();
+        
+
+        firedb.ref(dataFireText).update({
+                text: newText,
+            })
+    }
 
     function reloadPage(){
         setInterval(closeGame, 1000);
@@ -59,6 +74,7 @@ window.onload = function (){
         var ties = 0;
         var turn = 0;
         var choice = "";
+        var text = "";
         var name = $("#name-input").val().trim();
 
         if (numPlayerChoosen === 0){
@@ -69,10 +85,11 @@ window.onload = function (){
                         wins: wins,
                         losses: losses,
                         ties: ties,
-                        choice: choice
+                        choice: choice,
                         }
                     },
                     turn: turn,
+                    text: text,
                     dateAdded: firebase.database.ServerValue.TIMESTAMP
                 }
             })
@@ -191,7 +208,9 @@ firedb.ref().on("value", function(snapshot){
     is_Player2_alive = snapshot.child(checkPlayerPath2).exists()
     
     checkTurnPath = masterKey + "/CameronRPS/"
+    checkTextPath = masterKey + "/CameronRPS/"
     is_GameOn = snapshot.child(checkTurnPath).exists()
+    is_TextOn = snapshot.child(checkTextPath).exists()
 
 
     if (is_Player2_alive){    
@@ -221,6 +240,7 @@ firedb.ref().on("value", function(snapshot){
                     $("#w1").text(play1Path.wins);
                     $("#l1").text(play1Path.losses);
                     $("#t1").text(play1Path.ties);
+                    $(".btn-im").prop("disabled", false);
                 }  
             }
         }
@@ -256,9 +276,28 @@ firedb.ref().on("value", function(snapshot){
             }
         }
     }
+    if (is_TextOn) {
+        for (key in snapChild){
+            if (key == masterKey){ 
+                if (snapChild[key].CameronRPS){
+                    var textFromDb = snapChild[key].CameronRPS.text; 
+                    textCheck = textFromDb;
+                    if (textCheck) {
+                        console.log("text from db")
+                        newLine = $('<p>').text(textCheck);
+                        $("#incometext").append(newLine);
+                    }
+                }  
+            }
+        }
+    }
+ 
+
+
+
     else{
         console.log("players not created");
-        //$("#head_mc").text("If boxes do not say 'JOIN NOW', you may need to Reload your page.");
+        $(".btn-im").prop("disabled", true);
     }
     }, function(errorObject) {
     console.log("Errors handled: " + errorObject.code);
@@ -327,27 +366,6 @@ function judgeMaster () {
     }
 }
 
-
-// firedb.ref().orderByChild("dateAdded").limitToLast(1).on("child_added", function(snapshot) {
-
-//     var objChild =  snapshot.val()
-    
-//     for (key in objChild){
-//         if (key == 'CameronRPS') {   
-//             if (objChild[key].hasOwnProperty("player")){
-//                 propPlay = objChild[key].player;
-//                 if (propPlay.hasOwnProperty("2")) {
-//                     userDbData = propPlay["2"].name;                        
-//                     $("#head_mc").text("GAME ON")
-//                 }
-//                 if (propPlay.hasOwnProperty("1")){
-//                     $("#head_mc").text("Waiting for Player 2");
-//                 }
-//             }
-//         }
-//     }
-
-// });
 
 function newGrabber(event) {
     
