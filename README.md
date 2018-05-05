@@ -63,5 +63,4 @@ This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md
 ## Acknowledgments
 * UC Berkeley Extension
 * Teachers [David Blanchard](https://www.linkedin.com/in/dblanchard13/), [Rai Lee](https://www.linkedin.com/in/rai-lee-38061696/), [Emma Brown](https://github.com/EmmaEm),
-* <a href="https://github.com/EmmaEm" target="_blank">Emma Brown</a>
 * _“Wisdom is not a product of schooling but of the lifelong attempt to acquire it.”_ **― Albert Einstein** 
